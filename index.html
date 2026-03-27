@@ -14,19 +14,27 @@
         .table-scroll {
             -webkit-overflow-scrolling: touch;
         }
+        /* 提示框動畫過渡效果 */
+        .toast-transition {
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+        }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans">
+<body class="bg-gray-100 text-gray-800 font-sans relative">
+
+    <!-- 🌟 自動消失的提示框 (Toast) 🌟 -->
+    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 -translate-y-5 px-6 py-3 rounded-lg shadow-xl z-50 opacity-0 pointer-events-none toast-transition text-white font-bold text-center w-max max-w-sm">
+        提示訊息
+    </div>
 
     <!-- 頂部導航列 -->
     <nav class="bg-blue-600 text-white p-3 md:p-4 shadow-md sticky top-0 z-30">
         <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
             <h1 class="text-lg md:text-xl font-bold text-center w-full md:w-auto">
-                樂華天主教小學 - 教師請假及代課記錄 
+                教師請假及代課記錄 
                 <span id="displayYear" class="text-blue-200 text-xs md:text-sm ml-1 block md:inline mt-1 md:mt-0">讀取中...</span>
             </h1>
             <div class="flex flex-wrap justify-center w-full md:w-auto gap-2">
-                <!-- 調整了按鈕順序，讓查看記錄排在前面 -->
                 <button id="btn-tab-view" onclick="switchTab('tab-view')" class="nav-btn bg-blue-700 md:bg-transparent hover:bg-blue-500 px-3 py-2 md:py-1.5 rounded font-medium text-sm md:text-base transition-colors flex-1 md:flex-none text-center">查看記錄</button>
                 <button id="btn-tab-record" onclick="switchTab('tab-record')" class="nav-btn bg-blue-700 md:bg-transparent hover:bg-blue-500 px-3 py-2 md:py-1.5 rounded font-medium text-sm md:text-base transition-colors flex-1 md:flex-none text-center flex items-center justify-center gap-1">🔒 記錄輸入</button>
                 <button id="btn-tab-settings" onclick="switchTab('tab-settings')" class="nav-btn bg-blue-700 md:bg-transparent hover:bg-blue-500 px-3 py-2 md:py-1.5 rounded font-medium text-sm md:text-base transition-colors flex-1 md:flex-none text-center flex items-center justify-center gap-1">🔒 系統設定</button>
@@ -59,7 +67,7 @@
 
     <div class="container mx-auto p-3 md:p-6 mt-2 md:mt-4">
 
-        <!-- 版面 2: 查看記錄 (移到第一個，預設顯示) -->
+        <!-- 版面 2: 查看記錄 -->
         <div id="tab-view" class="tab-content hidden">
             <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-700 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                 本學年統計表 
@@ -85,7 +93,7 @@
             </div>
         </div>
 
-        <!-- 版面 1: 記錄輸入 (現在需密碼) -->
+        <!-- 版面 1: 記錄輸入 -->
         <div id="tab-record" class="tab-content hidden">
             <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-700">新增請假 / 代課記錄</h2>
             <div class="bg-white p-4 md:p-6 rounded-lg shadow-md max-w-2xl mx-auto">
@@ -108,7 +116,7 @@
                         <div class="space-y-3 bg-gray-50 p-3 md:p-4 rounded-lg border border-gray-200">
                             <!-- 情況 a -->
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2">
-                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">a. 請三日病假</span>
+                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">a. 請三日病假 (只作記錄)</span>
                                 <div class="flex items-center justify-end w-full sm:w-1/3">
                                     <button type="button" onclick="changeQty('qty_a', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
                                     <input type="number" id="qty_a" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
@@ -117,7 +125,7 @@
                             </div>
                             <!-- 情況 b -->
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-red-400">
-                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">b. 請一節班主任節/小息一及二/第十一節及課前當值(15分鐘) (-0.5分)</span>
+                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">b. 請假: 班主任節/小息一及二... (-0.5分)</span>
                                 <div class="flex items-center justify-end w-full sm:w-1/3">
                                     <button type="button" onclick="changeQty('qty_b', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
                                     <input type="number" id="qty_b" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
@@ -126,7 +134,7 @@
                             </div>
                             <!-- 情況 c -->
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-red-600">
-                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">c. 請一節第一至十課節、午膳及第小息三(30分鐘) (-1.0分)</span>
+                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">c. 請假: 第一至十課節/午膳... (-1.0分)</span>
                                 <div class="flex items-center justify-end w-full sm:w-1/3">
                                     <button type="button" onclick="changeQty('qty_c', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
                                     <input type="number" id="qty_c" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
@@ -135,7 +143,7 @@
                             </div>
                             <!-- 情況 d -->
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-green-400">
-                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">d. 代一節班主任節/小息一及二/第十一節及課前當值(15分鐘) (+0.5分)</span>
+                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">d. 代課: 班主任節/小息一及二... (+0.5分)</span>
                                 <div class="flex items-center justify-end w-full sm:w-1/3">
                                     <button type="button" onclick="changeQty('qty_d', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
                                     <input type="number" id="qty_d" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
@@ -144,7 +152,7 @@
                             </div>
                             <!-- 情況 e -->
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-green-600">
-                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">e. 代一節第一至十課節、午膳及第小息三(30分鐘) (+1.0分)</span>
+                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">e. 代課: 第一至十課節/午膳... (+1.0分)</span>
                                 <div class="flex items-center justify-end w-full sm:w-1/3">
                                     <button type="button" onclick="changeQty('qty_e', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
                                     <input type="number" id="qty_e" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
@@ -158,9 +166,9 @@
             </div>
         </div>
 
-        <!-- 版面 3: 系統設定 (現在需密碼) -->
+        <!-- 版面 3: 系統設定 -->
         <div id="tab-settings" class="tab-content hidden">
-            <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-700">系統設定 <span class="text-sm text-red-500">(副校長專用)</span></h2>
+            <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-700">系統設定 </h2>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
                 <!-- 學年設定 -->
                 <div class="bg-white p-4 md:p-6 rounded-lg shadow-md border-t-4 border-red-500">
@@ -201,13 +209,41 @@
         let isVPAuthenticated = false;
 
         let appData = { year: '', teachers: [], records: [] };
+        
+        // 用來追蹤 Toast 的計時器，避免快速連續點擊時動畫錯亂
+        let toastTimeout; 
 
         window.onload = function() {
             setDefaultDate();
-            // 預設切換到查看記錄頁面
             switchTab('tab-view');
             fetchData();
         };
+
+        // 🌟 新增：顯示自動消失提示框的功能
+        function showToast(message, isSuccess = true) {
+            const toast = document.getElementById('toast');
+            
+            // 設定訊息文字
+            toast.innerText = message;
+            
+            // 依照成功或失敗，改變背景顏色 (綠色=成功，紅色=失敗)
+            toast.className = `fixed top-20 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-lg shadow-xl z-50 text-white font-bold text-center w-max max-w-sm toast-transition ${isSuccess ? 'bg-green-500' : 'bg-red-500'}`;
+            
+            // 讓它顯示並向下滑動一點點
+            setTimeout(() => {
+                toast.classList.remove('opacity-0', '-translate-y-5');
+                toast.classList.add('opacity-100', 'translate-y-0');
+            }, 10);
+
+            // 如果之前有計時器，先取消掉
+            if(toastTimeout) clearTimeout(toastTimeout);
+
+            // 2秒後自動隱藏
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', '-translate-y-5');
+            }, 2000);
+        }
 
         function setDefaultDate() {
             const today = new Date();
@@ -226,15 +262,13 @@
         }
 
         function switchTab(tabId) {
-            // 🔒 密碼驗證邏輯
             if ((tabId === 'tab-record' || tabId === 'tab-settings') && !isVPAuthenticated) {
                 const inputPass = prompt("此為受保護的頁面，請輸入密碼：");
                 if (inputPass === VP_PASSWORD) {
                     isVPAuthenticated = true;
-                    // 驗證通過，繼續執行下方切換頁面的程式碼
                 } else {
                     if(inputPass !== null) alert("密碼錯誤，無法進入！");
-                    return; // 密碼錯誤，中斷執行，不切換頁面
+                    return; 
                 }
             }
 
@@ -267,10 +301,10 @@
                 document.getElementById('displayYear').innerText = `(${appData.year})`;
                 updateTeacherDropdown();
                 updateTeacherListSettings();
-                renderSummaryTable(); // 確保資料載入後刷新表格
+                renderSummaryTable();
             } catch (error) {
                 console.error('讀取資料錯誤:', error);
-                alert('無法從伺服器讀取資料，請確認網址或網路連線。');
+                showToast('無法從伺服器讀取資料，請確認網路連線。', false);
             }
             toggleLoading(false);
         }
@@ -295,6 +329,7 @@
             });
         }
 
+        // 🌟 這裡更新了：替換掉 alert() 🌟
         async function submitRecords(event) {
             event.preventDefault();
             const teacher = document.getElementById('teacherSelect').value;
@@ -313,7 +348,8 @@
             });
 
             if(recordsToSubmit.length === 0) {
-                alert('請至少在一個情況項目中輸入數量！');
+                // 使用紅色提示框
+                showToast('請至少在一個情況項目中輸入數量！', false);
                 return;
             }
 
@@ -326,17 +362,22 @@
                 const result = await response.json();
                 
                 if(result.success) {
-                    showToast('記錄已成功新增！');
+                    // 🎉 使用綠色的自動消失提示框！
+                    showToast('✅ 記錄已成功新增！'); 
+                    
                     document.getElementById('recordForm').reset();
                     setDefaultDate();
-                    await fetchData();
+                    
+                    // 背景悄悄更新資料，不打斷使用者
+                    fetchData(); 
                 } else {
-                    alert('伺服器錯誤: ' + result.message);
+                    showToast('伺服器錯誤: ' + result.message, false);
                 }
             } catch (error) {
-                alert('儲存失敗，請檢查網路連線。');
+                showToast('儲存失敗，請檢查網路連線。', false);
             }
-            toggleLoading(false);
+            // 不要關閉 loading 動畫，因為 fetchData 裡面自己會開關
+            if(recordsToSubmit.length === 0) toggleLoading(false); 
         }
 
         function renderSummaryTable() {
@@ -406,7 +447,6 @@
                             <div class="flex flex-wrap gap-2 mt-2">
                     `;
                     typeRecs.forEach(r => {
-                        // 🆕 在每個日期旁加入「刪除」小按鈕
                         html += `
                         <span class="bg-white px-2 md:px-3 py-1 rounded text-xs md:text-sm shadow-sm border border-gray-300 text-gray-700 flex items-center gap-1 group">
                             ${r.date}
@@ -429,11 +469,9 @@
             document.getElementById('teacherModal').classList.add('hidden');
         }
 
-        // 🆕 新增：刪除單筆記錄的連線函式
         async function deleteSingleRecord(teacher, type, date) {
-            // 只有副校長(已驗證)才能刪除
             if (!isVPAuthenticated) {
-                alert("刪除記錄需要副校長權限。請先切換至「記錄輸入」輸入密碼解鎖！");
+                alert("刪除記錄需要權限。請先切換至「記錄輸入」輸入密碼解鎖！");
                 return;
             }
 
@@ -448,15 +486,14 @@
                 const result = await response.json();
                 
                 if(result.success) {
-                    alert('記錄已成功刪除！');
-                    await fetchData(); // 重新讀取資料
-                    closeTeacherModal(); // 關閉明細視窗，體驗更順暢
+                    showToast('🗑️ 記錄已成功刪除！');
+                    await fetchData(); 
+                    closeTeacherModal(); 
                 } else {
-                    // 如果後端還沒實作刪除功能，會顯示錯誤提示
-                    alert('刪除失敗: ' + (result.message || '請確認 GAS 後端已經加入了 deleteRecord 的程式碼。'));
+                    showToast('刪除失敗: ' + result.message, false);
                 }
             } catch (error) {
-                alert('刪除連線失敗，請檢查網路。');
+                showToast('刪除連線失敗，請檢查網路。', false);
             }
             toggleLoading(false);
         }
@@ -472,6 +509,7 @@
                 });
                 const result = await response.json();
                 if(result.success) {
+                    showToast('✅ 教師已成功新增！');
                     document.getElementById('newTeacherInput').value = '';
                     await fetchData();
                 }
@@ -488,7 +526,10 @@
                     body: JSON.stringify({ action: 'removeTeacher', teacherName })
                 });
                 const result = await response.json();
-                if(result.success) await fetchData();
+                if(result.success) {
+                    showToast('🗑️ 教師已移除！');
+                    await fetchData();
+                }
             } catch (error) {}
             toggleLoading(false);
         }
@@ -505,6 +546,7 @@
                 });
                 const result = await response.json();
                 if(result.success) {
+                    showToast('✨ 新學年已成功設定！');
                     document.getElementById('newYearInput').value = '';
                     await fetchData();
                 }
