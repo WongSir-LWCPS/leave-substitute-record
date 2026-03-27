@@ -45,7 +45,7 @@
     <!-- 載入中提示 -->
     <div id="loading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
         <div class="bg-white p-6 rounded shadow-lg text-center mx-4">
-            <p class="text-lg font-bold text-blue-600">處理中，請稍候...</p>
+            <p class="text-lg font-bold text-blue-600">系統載入中...</p>
         </div>
     </div>
 
@@ -95,80 +95,82 @@
 
         <!-- 版面 1: 記錄輸入 -->
         <div id="tab-record" class="tab-content hidden">
-            <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-700">新增請假 / 代課記錄</h2>
-            <div class="bg-white p-4 md:p-6 rounded-lg shadow-md max-w-2xl mx-auto">
-                <form id="recordForm" onsubmit="submitRecords(event)">
-                    <div class="flex flex-col sm:flex-row gap-4 mb-6">
-                        <div class="flex-1">
-                            <label class="block text-gray-700 font-bold mb-2">1. 選擇教師</label>
-                            <select id="teacherSelect" required class="w-full border border-gray-300 p-3 md:p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg md:text-base bg-white">
-                                <option value="">請選擇...</option>
-                            </select>
-                        </div>
-                        <div class="flex-1">
-                            <label class="block text-gray-700 font-bold mb-2">2. 日期</label>
-                            <input type="date" id="recordDate" required class="w-full border border-gray-300 p-3 md:p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg md:text-base">
-                        </div>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <label class="block text-gray-700 font-bold mb-2">3. 記錄數量 <span class="text-sm font-normal text-gray-500 block md:inline">(請在需要的項目輸入節數)</span></label>
-                        <div class="space-y-3 bg-gray-50 p-3 md:p-4 rounded-lg border border-gray-200">
-                            <!-- 情況 a -->
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2">
-                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">a. 請三日病假 (只作記錄)</span>
-                                <div class="flex items-center justify-end w-full sm:w-1/3">
-                                    <button type="button" onclick="changeQty('qty_a', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
-                                    <input type="number" id="qty_a" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
-                                    <button type="button" onclick="changeQty('qty_a', 1)" class="bg-gray-200 px-4 py-2 rounded-r text-xl hover:bg-gray-300 transition-colors">+</button>
-                                </div>
+            <div class="max-w-2xl mx-auto">
+                <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-700">新增請假 / 代課記錄</h2>
+                <div class="bg-white p-4 md:p-6 rounded-lg shadow-md">
+                    <form id="recordForm" onsubmit="submitRecords(event)">
+                        <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                            <div class="flex-1">
+                                <label class="block text-gray-700 font-bold mb-2">1. 選擇教師</label>
+                                <select id="teacherSelect" required class="w-full h-12 md:h-11 border border-gray-300 px-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg md:text-base bg-white">
+                                    <option value="">請選擇...</option>
+                                </select>
                             </div>
-                            <!-- 情況 b -->
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-red-400">
-                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">b. 請假: 班主任節/小息一及二... (-0.5分)</span>
-                                <div class="flex items-center justify-end w-full sm:w-1/3">
-                                    <button type="button" onclick="changeQty('qty_b', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
-                                    <input type="number" id="qty_b" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
-                                    <button type="button" onclick="changeQty('qty_b', 1)" class="bg-gray-200 px-4 py-2 rounded-r text-xl hover:bg-gray-300 transition-colors">+</button>
-                                </div>
-                            </div>
-                            <!-- 情況 c -->
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-red-600">
-                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">c. 請假: 第一至十課節/午膳... (-1.0分)</span>
-                                <div class="flex items-center justify-end w-full sm:w-1/3">
-                                    <button type="button" onclick="changeQty('qty_c', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
-                                    <input type="number" id="qty_c" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
-                                    <button type="button" onclick="changeQty('qty_c', 1)" class="bg-gray-200 px-4 py-2 rounded-r text-xl hover:bg-gray-300 transition-colors">+</button>
-                                </div>
-                            </div>
-                            <!-- 情況 d -->
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-green-400">
-                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">d. 代課: 班主任節/小息一及二... (+0.5分)</span>
-                                <div class="flex items-center justify-end w-full sm:w-1/3">
-                                    <button type="button" onclick="changeQty('qty_d', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
-                                    <input type="number" id="qty_d" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
-                                    <button type="button" onclick="changeQty('qty_d', 1)" class="bg-gray-200 px-4 py-2 rounded-r text-xl hover:bg-gray-300 transition-colors">+</button>
-                                </div>
-                            </div>
-                            <!-- 情況 e -->
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-green-600">
-                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">e. 代課: 第一至十課節/午膳... (+1.0分)</span>
-                                <div class="flex items-center justify-end w-full sm:w-1/3">
-                                    <button type="button" onclick="changeQty('qty_e', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
-                                    <input type="number" id="qty_e" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
-                                    <button type="button" onclick="changeQty('qty_e', 1)" class="bg-gray-200 px-4 py-2 rounded-r text-xl hover:bg-gray-300 transition-colors">+</button>
-                                </div>
+                            <div class="flex-1">
+                                <label class="block text-gray-700 font-bold mb-2">2. 日期</label>
+                                <input type="date" id="recordDate" required class="w-full h-12 md:h-11 border border-gray-300 px-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg md:text-base bg-white">
                             </div>
                         </div>
-                    </div>
-                    <button type="submit" class="bg-blue-600 text-white px-6 py-4 md:py-3 rounded-lg hover:bg-blue-700 w-full font-bold text-lg md:text-xl shadow-md transition-colors">提交當日記錄</button>
-                </form>
+                        
+                        <div class="mb-6">
+                            <label class="block text-gray-700 font-bold mb-2">3. 記錄數量 <span class="text-sm font-normal text-gray-500 block md:inline">(請在需要的項目輸入節數)</span></label>
+                            <div class="space-y-3 bg-gray-50 p-3 md:p-4 rounded-lg border border-gray-200">
+                                <!-- 情況 a -->
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2">
+                                    <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">a. 請三日病假 (只作記錄)</span>
+                                    <div class="flex items-center justify-end w-full sm:w-1/3">
+                                        <button type="button" onclick="changeQty('qty_a', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
+                                        <input type="number" id="qty_a" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
+                                        <button type="button" onclick="changeQty('qty_a', 1)" class="bg-gray-200 px-4 py-2 rounded-r text-xl hover:bg-gray-300 transition-colors">+</button>
+                                    </div>
+                                </div>
+                                <!-- 情況 b -->
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-red-400">
+                                    <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">b. 請一節班主任節/小息一及二/第十一節及課前當值(15分鐘) (-0.5分)</span>
+                                    <div class="flex items-center justify-end w-full sm:w-1/3">
+                                        <button type="button" onclick="changeQty('qty_b', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
+                                        <input type="number" id="qty_b" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
+                                        <button type="button" onclick="changeQty('qty_b', 1)" class="bg-gray-200 px-4 py-2 rounded-r text-xl hover:bg-gray-300 transition-colors">+</button>
+                                    </div>
+                                </div>
+                                <!-- 情況 c -->
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-red-600">
+                                    <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">c. 請假: 請一節第一至十課節、午膳及第小息三(30分鐘)(-1.0分)</span>
+                                    <div class="flex items-center justify-end w-full sm:w-1/3">
+                                        <button type="button" onclick="changeQty('qty_c', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
+                                        <input type="number" id="qty_c" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
+                                        <button type="button" onclick="changeQty('qty_c', 1)" class="bg-gray-200 px-4 py-2 rounded-r text-xl hover:bg-gray-300 transition-colors">+</button>
+                                    </div>
+                                </div>
+                                <!-- 情況 d -->
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-green-400">
+                                    <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">d. 代一節班主任節/小息一及二/第十一節及課前當值(15分鐘)(+0.5分)</span>
+                                    <div class="flex items-center justify-end w-full sm:w-1/3">
+                                        <button type="button" onclick="changeQty('qty_d', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
+                                        <input type="number" id="qty_d" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
+                                        <button type="button" onclick="changeQty('qty_d', 1)" class="bg-gray-200 px-4 py-2 rounded-r text-xl hover:bg-gray-300 transition-colors">+</button>
+                                    </div>
+                                </div>
+                                <!-- 情況 e -->
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-green-600">
+                                    <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">e. 代一節第一至十課節、午膳及第小息三(30分鐘)(+1.0分)</span>
+                                    <div class="flex items-center justify-end w-full sm:w-1/3">
+                                        <button type="button" onclick="changeQty('qty_e', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
+                                        <input type="number" id="qty_e" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
+                                        <button type="button" onclick="changeQty('qty_e', 1)" class="bg-gray-200 px-4 py-2 rounded-r text-xl hover:bg-gray-300 transition-colors">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="bg-blue-600 text-white px-6 py-4 md:py-3 rounded-lg hover:bg-blue-700 w-full font-bold text-lg md:text-xl shadow-md transition-colors">提交當日記錄</button>
+                    </form>
+                </div>
             </div>
         </div>
 
         <!-- 版面 3: 系統設定 -->
         <div id="tab-settings" class="tab-content hidden">
-            <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-700">系統設定 </h2>
+            <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-700">系統設定</h2>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
                 <!-- 學年設定 -->
                 <div class="bg-white p-4 md:p-6 rounded-lg shadow-md border-t-4 border-red-500">
@@ -204,7 +206,7 @@
     <script>
         const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyqVbOVZEXSYS8x6sC-qLoE9AWHZUcw-ln7GQd5PKKY8ua_9KlkmBFp9DTUeGXNxC3FnA/exec';
 
-        // 🛡️ 密碼設定
+        // 🛡️ 系統密碼設定
         const VP_PASSWORD = "535800"; 
         let isVPAuthenticated = false;
 
@@ -238,7 +240,7 @@
             // 如果之前有計時器，先取消掉
             if(toastTimeout) clearTimeout(toastTimeout);
 
-            // 2秒後自動隱藏
+            // 3秒後自動隱藏
             toastTimeout = setTimeout(() => {
                 toast.classList.remove('opacity-100', 'translate-y-0');
                 toast.classList.add('opacity-0', '-translate-y-5');
@@ -292,8 +294,9 @@
             document.getElementById('loading').style.display = show ? 'flex' : 'none';
         }
 
-        async function fetchData() {
-            toggleLoading(true);
+        // 🌟 新增 showLoading 參數，讓系統可以「背景更新」不顯示動畫
+        async function fetchData(showLoading = true) {
+            if(showLoading) toggleLoading(true);
             try {
                 const response = await fetch(GAS_API_URL + '?action=getData');
                 const data = await response.json();
@@ -306,7 +309,7 @@
                 console.error('讀取資料錯誤:', error);
                 showToast('無法從伺服器讀取資料，請確認網路連線。', false);
             }
-            toggleLoading(false);
+            if(showLoading) toggleLoading(false);
         }
 
         function updateTeacherDropdown() {
@@ -329,7 +332,7 @@
             });
         }
 
-        // 🌟 這裡更新了：替換掉 alert() 🌟
+        // 🌟 這裡更新了：立刻關閉 Loading 動畫，並使用背景更新 🌟
         async function submitRecords(event) {
             event.preventDefault();
             const teacher = document.getElementById('teacherSelect').value;
@@ -348,7 +351,6 @@
             });
 
             if(recordsToSubmit.length === 0) {
-                // 使用紅色提示框
                 showToast('請至少在一個情況項目中輸入數量！', false);
                 return;
             }
@@ -361,23 +363,24 @@
                 });
                 const result = await response.json();
                 
+                // API 儲存完畢，立刻解除鎖定畫面！
+                toggleLoading(false); 
+                
                 if(result.success) {
-                    // 🎉 使用綠色的自動消失提示框！
                     showToast('✅ 記錄已成功新增！'); 
                     
                     document.getElementById('recordForm').reset();
                     setDefaultDate();
                     
-                    // 背景悄悄更新資料，不打斷使用者
-                    fetchData(); 
+                    // 背景偷偷拉取新資料更新表格，不打斷使用者 (傳入 false)
+                    fetchData(false); 
                 } else {
                     showToast('伺服器錯誤: ' + result.message, false);
                 }
             } catch (error) {
+                toggleLoading(false);
                 showToast('儲存失敗，請檢查網路連線。', false);
             }
-            // 不要關閉 loading 動畫，因為 fetchData 裡面自己會開關
-            if(recordsToSubmit.length === 0) toggleLoading(false); 
         }
 
         function renderSummaryTable() {
@@ -426,10 +429,10 @@
             
             const typeLabels = {
                'a': 'a. 三日病假 (不計分)',
-               'b': 'b. 請假: 班主任/小息等 (-0.5)',
-               'c': 'c. 請假: 一般課節/午膳等 (-1.0)',
-               'd': 'd. 代課: 班主任/小息等 (+0.5)',
-               'e': 'e. 代課: 一般課節/午膳等 (+1.0)'
+               'b': 'b. 請一節班主任節/小息一及二/第十一節及課前當值(15分鐘) (-0.5分)',
+               'c': 'c. 請假: 請一節第一至十課節、午膳及第小息三(30分鐘)(-1.0分)',
+               'd': 'd. 代一節班主任節/小息一及二/第十一節及課前當值(15分鐘)(+0.5分)',
+               'e': 'e. 代一節第一至十課節、午膳及第小息三(30分鐘)(+1.0分)'
             };
             
             let html = '';
@@ -471,7 +474,7 @@
 
         async function deleteSingleRecord(teacher, type, date) {
             if (!isVPAuthenticated) {
-                alert("刪除記錄需要權限。請先切換至「記錄輸入」輸入密碼解鎖！");
+                alert("刪除記錄需要權限。請先切換至「記錄輸入」或「系統設定」輸入密碼解鎖！");
                 return;
             }
 
@@ -485,17 +488,19 @@
                 });
                 const result = await response.json();
                 
+                toggleLoading(false); // 提早關閉
+                
                 if(result.success) {
                     showToast('🗑️ 記錄已成功刪除！');
-                    await fetchData(); 
                     closeTeacherModal(); 
+                    fetchData(false); // 背景更新
                 } else {
                     showToast('刪除失敗: ' + result.message, false);
                 }
             } catch (error) {
+                toggleLoading(false);
                 showToast('刪除連線失敗，請檢查網路。', false);
             }
-            toggleLoading(false);
         }
 
         async function addTeacher() {
