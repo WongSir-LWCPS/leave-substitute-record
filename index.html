@@ -22,7 +22,7 @@
     <nav class="bg-blue-600 text-white p-3 md:p-4 shadow-md sticky top-0 z-30">
         <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
             <h1 class="text-lg md:text-xl font-bold text-center w-full md:w-auto">
-                教師請假及代課記錄 
+                樂華天主教小學 - 教師請假及代課記錄 
                 <span id="displayYear" class="text-blue-200 text-xs md:text-sm ml-1 block md:inline mt-1 md:mt-0">讀取中...</span>
             </h1>
             <div class="flex flex-wrap justify-center w-full md:w-auto gap-2">
@@ -108,7 +108,7 @@
                         <div class="space-y-3 bg-gray-50 p-3 md:p-4 rounded-lg border border-gray-200">
                             <!-- 情況 a -->
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2">
-                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">a. 請三日病假 (只作記錄)</span>
+                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">a. 請三日病假</span>
                                 <div class="flex items-center justify-end w-full sm:w-1/3">
                                     <button type="button" onclick="changeQty('qty_a', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
                                     <input type="number" id="qty_a" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
@@ -117,7 +117,7 @@
                             </div>
                             <!-- 情況 b -->
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-red-400">
-                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">b. 請假: 班主任節/小息一及二... (-0.5分)</span>
+                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">b. 請一節班主任節/小息一及二/第十一節及課前當值(15分鐘) (-0.5分)</span>
                                 <div class="flex items-center justify-end w-full sm:w-1/3">
                                     <button type="button" onclick="changeQty('qty_b', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
                                     <input type="number" id="qty_b" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
@@ -126,7 +126,7 @@
                             </div>
                             <!-- 情況 c -->
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-red-600">
-                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">c. 請假: 第一至十課節/午膳... (-1.0分)</span>
+                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">c. 請一節第一至十課節、午膳及第小息三(30分鐘) (-1.0分)</span>
                                 <div class="flex items-center justify-end w-full sm:w-1/3">
                                     <button type="button" onclick="changeQty('qty_c', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
                                     <input type="number" id="qty_c" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
@@ -135,7 +135,7 @@
                             </div>
                             <!-- 情況 d -->
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-green-400">
-                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">d. 代課: 班主任節/小息一及二... (+0.5分)</span>
+                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">d. 代一節班主任節/小息一及二/第十一節及課前當值(15分鐘) (+0.5分)</span>
                                 <div class="flex items-center justify-end w-full sm:w-1/3">
                                     <button type="button" onclick="changeQty('qty_d', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
                                     <input type="number" id="qty_d" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
@@ -144,7 +144,7 @@
                             </div>
                             <!-- 情況 e -->
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-green-600">
-                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">e. 代課: 第一至十課節/午膳... (+1.0分)</span>
+                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">e. 代一節第一至十課節、午膳及第小息三(30分鐘) (+1.0分)</span>
                                 <div class="flex items-center justify-end w-full sm:w-1/3">
                                     <button type="button" onclick="changeQty('qty_e', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
                                     <input type="number" id="qty_e" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
