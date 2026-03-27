@@ -87,7 +87,7 @@
 
         <!-- 版面 1: 記錄輸入 (現在需密碼) -->
         <div id="tab-record" class="tab-content hidden">
-            <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-700">新增請假 / 代課記錄 <span class="text-sm text-red-500">(副校長專用)</span></h2>
+            <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-700">新增請假 / 代課記錄</h2>
             <div class="bg-white p-4 md:p-6 rounded-lg shadow-md max-w-2xl mx-auto">
                 <form id="recordForm" onsubmit="submitRecords(event)">
                     <div class="flex flex-col sm:flex-row gap-4 mb-6">
@@ -326,7 +326,7 @@
                 const result = await response.json();
                 
                 if(result.success) {
-                    alert('記錄已成功新增！');
+                    showToast('記錄已成功新增！');
                     document.getElementById('recordForm').reset();
                     setDefaultDate();
                     await fetchData();
