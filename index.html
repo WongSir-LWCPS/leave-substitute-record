@@ -196,7 +196,7 @@
     <script>
         const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyqVbOVZEXSYS8x6sC-qLoE9AWHZUcw-ln7GQd5PKKY8ua_9KlkmBFp9DTUeGXNxC3FnA/exec';
 
-        // 🛡️ 副校長密碼設定
+        // 🛡️ 密碼設定
         const VP_PASSWORD = "535800"; 
         let isVPAuthenticated = false;
 
@@ -228,7 +228,7 @@
         function switchTab(tabId) {
             // 🔒 密碼驗證邏輯
             if ((tabId === 'tab-record' || tabId === 'tab-settings') && !isVPAuthenticated) {
-                const inputPass = prompt("此為受保護的頁面，請輸入副校長密碼：");
+                const inputPass = prompt("此為受保護的頁面，請輸入密碼：");
                 if (inputPass === VP_PASSWORD) {
                     isVPAuthenticated = true;
                     // 驗證通過，繼續執行下方切換頁面的程式碼
