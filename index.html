@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教師請假及代課記錄系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .table-scroll {
+            -webkit-overflow-scrolling: touch;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans">
+
+    <!-- 頂部導航列 -->
+    <nav class="bg-blue-600 text-white p-3 md:p-4 shadow-md sticky top-0 z-30">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
+            <h1 class="text-lg md:text-xl font-bold text-center w-full md:w-auto">
+                教師請假及代課記錄 
+                <span id="displayYear" class="text-blue-200 text-xs md:text-sm ml-1 block md:inline mt-1 md:mt-0">讀取中...</span>
+            </h1>
+            <div class="flex flex-wrap justify-center w-full md:w-auto gap-2">
+                <!-- 調整了按鈕順序，讓查看記錄排在前面 -->
+                <button id="btn-tab-view" onclick="switchTab('tab-view')" class="nav-btn bg-blue-700 md:bg-transparent hover:bg-blue-500 px-3 py-2 md:py-1.5 rounded font-medium text-sm md:text-base transition-colors flex-1 md:flex-none text-center">查看記錄</button>
+                <button id="btn-tab-record" onclick="switchTab('tab-record')" class="nav-btn bg-blue-700 md:bg-transparent hover:bg-blue-500 px-3 py-2 md:py-1.5 rounded font-medium text-sm md:text-base transition-colors flex-1 md:flex-none text-center flex items-center justify-center gap-1">🔒 記錄輸入</button>
+                <button id="btn-tab-settings" onclick="switchTab('tab-settings')" class="nav-btn bg-blue-700 md:bg-transparent hover:bg-blue-500 px-3 py-2 md:py-1.5 rounded font-medium text-sm md:text-base transition-colors flex-1 md:flex-none text-center flex items-center justify-center gap-1">🔒 系統設定</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 載入中提示 -->
+    <div id="loading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded shadow-lg text-center mx-4">
+            <p class="text-lg font-bold text-blue-600">處理中，請稍候...</p>
+        </div>
+    </div>
+
+    <!-- 教師詳細記錄彈出視窗 -->
+    <div id="teacherModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40 hidden p-2 md:p-4">
+        <div class="bg-white p-4 md:p-6 rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] md:max-h-[80vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <h3 id="modalTitle" class="text-lg md:text-2xl font-bold text-blue-700">教師記錄明細</h3>
+                <button onclick="closeTeacherModal()" class="text-gray-500 hover:text-red-500 text-3xl font-bold leading-none">&times;</button>
+            </div>
+            <div id="modalContent" class="overflow-y-auto flex-grow p-1 md:p-2 space-y-4">
+                <!-- 明細內容由 JS 動態生成 -->
+            </div>
+            <div class="mt-4 border-t pt-4 text-right">
+                <button onclick="closeTeacherModal()" class="bg-gray-500 text-white w-full md:w-auto px-6 py-3 md:py-2 rounded hover:bg-gray-600 text-lg md:text-base font-bold">關閉視窗</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto p-3 md:p-6 mt-2 md:mt-4">
+
+        <!-- 版面 2: 查看記錄 (移到第一個，預設顯示) -->
+        <div id="tab-view" class="tab-content hidden">
+            <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-700 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                本學年統計表 
+                <span class="text-xs md:text-sm font-normal text-gray-500 bg-yellow-100 px-2 py-1 rounded inline-block w-max">💡 點擊姓名可看明細</span>
+            </h2>
+            <div class="bg-white rounded-lg shadow-md overflow-x-auto table-scroll">
+                <table class="w-full text-left border-collapse min-w-[600px]">
+                    <thead>
+                        <tr class="bg-gray-200 text-gray-700 text-sm md:text-base">
+                            <th class="p-2 md:p-3 border-b whitespace-nowrap sticky left-0 bg-gray-200 z-10">教師姓名</th>
+                            <th class="p-2 md:p-3 border-b whitespace-nowrap">a. 病假(次)</th>
+                            <th class="p-2 md:p-3 border-b whitespace-nowrap text-red-600">b. 請假(-0.5)</th>
+                            <th class="p-2 md:p-3 border-b whitespace-nowrap text-red-600">c. 請假(-1.0)</th>
+                            <th class="p-2 md:p-3 border-b whitespace-nowrap text-green-600">d. 代課(+0.5)</th>
+                            <th class="p-2 md:p-3 border-b whitespace-nowrap text-green-600">e. 代課(+1.0)</th>
+                            <th class="p-2 md:p-3 border-b whitespace-nowrap font-bold text-blue-600">總分</th>
+                        </tr>
+                    </thead>
+                    <tbody id="summaryTableBody" class="text-sm md:text-base">
+                        <!-- 資料由 JS 動態生成 -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 版面 1: 記錄輸入 (現在需密碼) -->
+        <div id="tab-record" class="tab-content hidden">
+            <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-700">新增請假 / 代課記錄 <span class="text-sm text-red-500">(副校長專用)</span></h2>
+            <div class="bg-white p-4 md:p-6 rounded-lg shadow-md max-w-2xl mx-auto">
+                <form id="recordForm" onsubmit="submitRecords(event)">
+                    <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                        <div class="flex-1">
+                            <label class="block text-gray-700 font-bold mb-2">1. 選擇教師</label>
+                            <select id="teacherSelect" required class="w-full border border-gray-300 p-3 md:p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg md:text-base bg-white">
+                                <option value="">請選擇...</option>
+                            </select>
+                        </div>
+                        <div class="flex-1">
+                            <label class="block text-gray-700 font-bold mb-2">2. 日期</label>
+                            <input type="date" id="recordDate" required class="w-full border border-gray-300 p-3 md:p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg md:text-base">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-gray-700 font-bold mb-2">3. 記錄數量 <span class="text-sm font-normal text-gray-500 block md:inline">(請在需要的項目輸入節數)</span></label>
+                        <div class="space-y-3 bg-gray-50 p-3 md:p-4 rounded-lg border border-gray-200">
+                            <!-- 情況 a -->
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2">
+                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">a. 請三日病假 (只作記錄)</span>
+                                <div class="flex items-center justify-end w-full sm:w-1/3">
+                                    <button type="button" onclick="changeQty('qty_a', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
+                                    <input type="number" id="qty_a" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
+                                    <button type="button" onclick="changeQty('qty_a', 1)" class="bg-gray-200 px-4 py-2 rounded-r text-xl hover:bg-gray-300 transition-colors">+</button>
+                                </div>
+                            </div>
+                            <!-- 情況 b -->
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-red-400">
+                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">b. 請假: 班主任節/小息一及二... (-0.5分)</span>
+                                <div class="flex items-center justify-end w-full sm:w-1/3">
+                                    <button type="button" onclick="changeQty('qty_b', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
+                                    <input type="number" id="qty_b" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
+                                    <button type="button" onclick="changeQty('qty_b', 1)" class="bg-gray-200 px-4 py-2 rounded-r text-xl hover:bg-gray-300 transition-colors">+</button>
+                                </div>
+                            </div>
+                            <!-- 情況 c -->
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-red-600">
+                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">c. 請假: 第一至十課節/午膳... (-1.0分)</span>
+                                <div class="flex items-center justify-end w-full sm:w-1/3">
+                                    <button type="button" onclick="changeQty('qty_c', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
+                                    <input type="number" id="qty_c" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
+                                    <button type="button" onclick="changeQty('qty_c', 1)" class="bg-gray-200 px-4 py-2 rounded-r text-xl hover:bg-gray-300 transition-colors">+</button>
+                                </div>
+                            </div>
+                            <!-- 情況 d -->
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-green-400">
+                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">d. 代課: 班主任節/小息一及二... (+0.5分)</span>
+                                <div class="flex items-center justify-end w-full sm:w-1/3">
+                                    <button type="button" onclick="changeQty('qty_d', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
+                                    <input type="number" id="qty_d" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
+                                    <button type="button" onclick="changeQty('qty_d', 1)" class="bg-gray-200 px-4 py-2 rounded-r text-xl hover:bg-gray-300 transition-colors">+</button>
+                                </div>
+                            </div>
+                            <!-- 情況 e -->
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-green-600">
+                                <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">e. 代課: 第一至十課節/午膳... (+1.0分)</span>
+                                <div class="flex items-center justify-end w-full sm:w-1/3">
+                                    <button type="button" onclick="changeQty('qty_e', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
+                                    <input type="number" id="qty_e" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
+                                    <button type="button" onclick="changeQty('qty_e', 1)" class="bg-gray-200 px-4 py-2 rounded-r text-xl hover:bg-gray-300 transition-colors">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-4 md:py-3 rounded-lg hover:bg-blue-700 w-full font-bold text-lg md:text-xl shadow-md transition-colors">提交當日記錄</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 版面 3: 系統設定 (現在需密碼) -->
+        <div id="tab-settings" class="tab-content hidden">
+            <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-gray-700">系統設定 <span class="text-sm text-red-500">(副校長專用)</span></h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+                <!-- 學年設定 -->
+                <div class="bg-white p-4 md:p-6 rounded-lg shadow-md border-t-4 border-red-500">
+                    <h2 class="text-lg md:text-xl font-bold mb-3 text-gray-700">1. 學年設定</h2>
+                    <p class="text-xs md:text-sm text-gray-500 mb-4 bg-red-50 p-2 rounded border border-red-100">
+                        注意：設定新學年將會<span class="text-red-500 font-bold">清除所有舊的記錄資料</span>，請確認已備份舊 Google Sheet。
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <input type="text" id="newYearInput" placeholder="例如: 2026-2027" class="border border-gray-300 p-3 md:p-2 rounded flex-grow text-lg md:text-base">
+                        <button onclick="resetYear()" class="bg-red-500 text-white px-4 py-3 md:py-2 rounded hover:bg-red-600 font-bold text-lg md:text-base whitespace-nowrap">開啟新學年</button>
+                    </div>
+                </div>
+
+                <!-- 老師設定 -->
+                <div class="bg-white p-4 md:p-6 rounded-lg shadow-md border-t-4 border-green-500">
+                    <h2 class="text-lg md:text-xl font-bold mb-3 text-gray-700">2. 教師名單設定</h2>
+                    <div class="flex flex-col sm:flex-row gap-2 mb-6">
+                        <input type="text" id="newTeacherInput" placeholder="輸入新教師姓名" class="border border-gray-300 p-3 md:p-2 rounded flex-grow text-lg md:text-base">
+                        <button onclick="addTeacher()" class="bg-green-500 text-white px-4 py-3 md:py-2 rounded hover:bg-green-600 font-bold text-lg md:text-base whitespace-nowrap">新增教師</button>
+                    </div>
+                    
+                    <h3 class="font-bold text-gray-600 mb-3 text-sm md:text-base">現有教師名單 <span class="text-xs font-normal text-gray-400">(點擊 x 移除)</span></h3>
+                    <div id="teacherList" class="flex flex-wrap gap-2">
+                        <!-- 教師名單由 JS 動態生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 系統邏輯腳本 -->
+    <script>
+        const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyqVbOVZEXSYS8x6sC-qLoE9AWHZUcw-ln7GQd5PKKY8ua_9KlkmBFp9DTUeGXNxC3FnA/exec';
+
+        // 🛡️ 副校長密碼設定
+        const VP_PASSWORD = "535800"; 
+        let isVPAuthenticated = false;
+
+        let appData = { year: '', teachers: [], records: [] };
+
+        window.onload = function() {
+            setDefaultDate();
+            // 預設切換到查看記錄頁面
+            switchTab('tab-view');
+            fetchData();
+        };
+
+        function setDefaultDate() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            document.getElementById('recordDate').value = `${yyyy}-${mm}-${dd}`;
+        }
+
+        function changeQty(id, amount) {
+            const input = document.getElementById(id);
+            let val = parseInt(input.value) || 0;
+            val += amount;
+            if(val < 0) val = 0;
+            input.value = val;
+        }
+
+        function switchTab(tabId) {
+            // 🔒 密碼驗證邏輯
+            if ((tabId === 'tab-record' || tabId === 'tab-settings') && !isVPAuthenticated) {
+                const inputPass = prompt("此為受保護的頁面，請輸入副校長密碼：");
+                if (inputPass === VP_PASSWORD) {
+                    isVPAuthenticated = true;
+                    // 驗證通過，繼續執行下方切換頁面的程式碼
+                } else {
+                    if(inputPass !== null) alert("密碼錯誤，無法進入！");
+                    return; // 密碼錯誤，中斷執行，不切換頁面
+                }
+            }
+
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-800', 'ring-2', 'ring-white');
+                btn.classList.add('bg-blue-700', 'md:bg-transparent');
+            });
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if(activeBtn) {
+                activeBtn.classList.remove('bg-blue-700', 'md:bg-transparent');
+                activeBtn.classList.add('bg-blue-800', 'ring-2', 'ring-white');
+            }
+
+            if(tabId === 'tab-view') renderSummaryTable();
+        }
+
+        function toggleLoading(show) {
+            document.getElementById('loading').style.display = show ? 'flex' : 'none';
+        }
+
+        async function fetchData() {
+            toggleLoading(true);
+            try {
+                const response = await fetch(GAS_API_URL + '?action=getData');
+                const data = await response.json();
+                appData = data;
+                document.getElementById('displayYear').innerText = `(${appData.year})`;
+                updateTeacherDropdown();
+                updateTeacherListSettings();
+                renderSummaryTable(); // 確保資料載入後刷新表格
+            } catch (error) {
+                console.error('讀取資料錯誤:', error);
+                alert('無法從伺服器讀取資料，請確認網址或網路連線。');
+            }
+            toggleLoading(false);
+        }
+
+        function updateTeacherDropdown() {
+            const select = document.getElementById('teacherSelect');
+            select.innerHTML = '<option value="">請選擇...</option>';
+            appData.teachers.forEach(teacher => {
+                select.innerHTML += `<option value="${teacher}">${teacher}</option>`;
+            });
+        }
+
+        function updateTeacherListSettings() {
+            const list = document.getElementById('teacherList');
+            list.innerHTML = '';
+            appData.teachers.forEach(teacher => {
+                list.innerHTML += `
+                    <span class="bg-gray-100 border border-gray-300 px-3 py-1.5 rounded-full flex items-center shadow-sm text-sm md:text-base">
+                        ${teacher}
+                        <button onclick="removeTeacher('${teacher}')" class="ml-2 text-red-500 hover:text-red-700 font-bold text-lg leading-none">&times;</button>
+                    </span>`;
+            });
+        }
+
+        async function submitRecords(event) {
+            event.preventDefault();
+            const teacher = document.getElementById('teacherSelect').value;
+            const date = document.getElementById('recordDate').value;
+
+            if(!teacher || !date) return;
+
+            const recordsToSubmit = [];
+            const types = ['a', 'b', 'c', 'd', 'e'];
+            
+            types.forEach(t => {
+                const count = parseInt(document.getElementById(`qty_${t}`).value) || 0;
+                if(count > 0) {
+                    recordsToSubmit.push({ date, teacher, type: t, count: count });
+                }
+            });
+
+            if(recordsToSubmit.length === 0) {
+                alert('請至少在一個情況項目中輸入數量！');
+                return;
+            }
+
+            toggleLoading(true);
+            try {
+                const response = await fetch(GAS_API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'addRecords', records: recordsToSubmit })
+                });
+                const result = await response.json();
+                
+                if(result.success) {
+                    alert('記錄已成功新增！');
+                    document.getElementById('recordForm').reset();
+                    setDefaultDate();
+                    await fetchData();
+                } else {
+                    alert('伺服器錯誤: ' + result.message);
+                }
+            } catch (error) {
+                alert('儲存失敗，請檢查網路連線。');
+            }
+            toggleLoading(false);
+        }
+
+        function renderSummaryTable() {
+            const tbody = document.getElementById('summaryTableBody');
+            tbody.innerHTML = '';
+
+            let summary = {};
+            appData.teachers.forEach(t => {
+                summary[t] = { a: 0, b: 0, c: 0, d: 0, e: 0, total: 0 };
+            });
+
+            appData.records.forEach(rec => {
+                if(summary[rec.teacher] && summary[rec.teacher][rec.type] !== undefined) {
+                    summary[rec.teacher][rec.type]++;
+                    summary[rec.teacher].total += parseFloat(rec.points);
+                }
+            });
+
+            appData.teachers.forEach(t => {
+                const stat = summary[t];
+                tbody.innerHTML += `
+                    <tr class="border-b hover:bg-blue-50 transition-colors">
+                        <td class="p-2 md:p-3 font-bold text-blue-600 cursor-pointer hover:underline whitespace-nowrap sticky left-0 bg-white/90 backdrop-blur-sm z-10 border-r md:border-r-0 border-gray-100" onclick="showTeacherDetails('${t}')">
+                            <span class="flex items-center gap-1">🔍 ${t}</span>
+                        </td>
+                        <td class="p-2 md:p-3 text-gray-600 text-center md:text-left">${stat.a}</td>
+                        <td class="p-2 md:p-3 text-red-500 text-center md:text-left">${stat.b}</td>
+                        <td class="p-2 md:p-3 text-red-500 text-center md:text-left">${stat.c}</td>
+                        <td class="p-2 md:p-3 text-green-600 text-center md:text-left">${stat.d}</td>
+                        <td class="p-2 md:p-3 text-green-600 text-center md:text-left">${stat.e}</td>
+                        <td class="p-2 md:p-3 font-bold text-center md:text-left ${stat.total < 0 ? 'text-red-600' : 'text-blue-600'}">${stat.total}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function showTeacherDetails(teacherName) {
+            const modal = document.getElementById('teacherModal');
+            const title = document.getElementById('modalTitle');
+            const content = document.getElementById('modalContent');
+            
+            title.innerText = `${teacherName} 的記錄明細`;
+            content.innerHTML = '';
+            
+            const tRecords = appData.records.filter(r => r.teacher === teacherName);
+            
+            const typeLabels = {
+               'a': 'a. 三日病假 (不計分)',
+               'b': 'b. 請假: 班主任/小息等 (-0.5)',
+               'c': 'c. 請假: 一般課節/午膳等 (-1.0)',
+               'd': 'd. 代課: 班主任/小息等 (+0.5)',
+               'e': 'e. 代課: 一般課節/午膳等 (+1.0)'
+            };
+            
+            let html = '';
+            let hasRecord = false;
+
+            for(let key in typeLabels) {
+                const typeRecs = tRecords.filter(r => r.type === key);
+                typeRecs.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                if(typeRecs.length > 0) {
+                    hasRecord = true;
+                    html += `
+                        <div class="bg-gray-50 p-3 md:p-4 rounded-lg border border-gray-200">
+                            <h4 class="font-bold text-gray-800 mb-2 border-b pb-2 text-sm md:text-base">${typeLabels[key]} <span class="text-xs md:text-sm font-normal text-gray-500 ml-2">(共 ${typeRecs.length} 次)</span></h4>
+                            <div class="flex flex-wrap gap-2 mt-2">
+                    `;
+                    typeRecs.forEach(r => {
+                        // 🆕 在每個日期旁加入「刪除」小按鈕
+                        html += `
+                        <span class="bg-white px-2 md:px-3 py-1 rounded text-xs md:text-sm shadow-sm border border-gray-300 text-gray-700 flex items-center gap-1 group">
+                            ${r.date}
+                            <button onclick="deleteSingleRecord('${teacherName}', '${key}', '${r.date}')" class="text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full w-5 h-5 flex items-center justify-center font-bold transition-colors" title="刪除這筆記錄">&times;</button>
+                        </span>`;
+                    });
+                    html += `</div></div>`;
+                }
+            }
+
+            if(!hasRecord) {
+                html = '<div class="text-center text-gray-500 py-8 text-sm md:text-base">目前沒有任何記錄</div>';
+            }
+            
+            content.innerHTML = html;
+            modal.classList.remove('hidden');
+        }
+
+        function closeTeacherModal() {
+            document.getElementById('teacherModal').classList.add('hidden');
+        }
+
+        // 🆕 新增：刪除單筆記錄的連線函式
+        async function deleteSingleRecord(teacher, type, date) {
+            // 只有副校長(已驗證)才能刪除
+            if (!isVPAuthenticated) {
+                alert("刪除記錄需要副校長權限。請先切換至「記錄輸入」輸入密碼解鎖！");
+                return;
+            }
+
+            if(!confirm(`⚠️ 確定要刪除 ${teacher} 在 ${date} 的這筆記錄嗎？`)) return;
+
+            toggleLoading(true);
+            try {
+                const response = await fetch(GAS_API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'deleteRecord', teacher: teacher, type: type, date: date })
+                });
+                const result = await response.json();
+                
+                if(result.success) {
+                    alert('記錄已成功刪除！');
+                    await fetchData(); // 重新讀取資料
+                    closeTeacherModal(); // 關閉明細視窗，體驗更順暢
+                } else {
+                    // 如果後端還沒實作刪除功能，會顯示錯誤提示
+                    alert('刪除失敗: ' + (result.message || '請確認 GAS 後端已經加入了 deleteRecord 的程式碼。'));
+                }
+            } catch (error) {
+                alert('刪除連線失敗，請檢查網路。');
+            }
+            toggleLoading(false);
+        }
+
+        async function addTeacher() {
+            const teacherName = document.getElementById('newTeacherInput').value.trim();
+            if(!teacherName) return;
+            toggleLoading(true);
+            try {
+                const response = await fetch(GAS_API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'addTeacher', teacherName })
+                });
+                const result = await response.json();
+                if(result.success) {
+                    document.getElementById('newTeacherInput').value = '';
+                    await fetchData();
+                }
+            } catch (error) {}
+            toggleLoading(false);
+        }
+
+        async function removeTeacher(teacherName) {
+            if(!confirm(`確定要移除教師「${teacherName}」嗎？`)) return;
+            toggleLoading(true);
+            try {
+                const response = await fetch(GAS_API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'removeTeacher', teacherName })
+                });
+                const result = await response.json();
+                if(result.success) await fetchData();
+            } catch (error) {}
+            toggleLoading(false);
+        }
+
+        async function resetYear() {
+            const newYear = document.getElementById('newYearInput').value.trim();
+            if(!newYear) return;
+            if(!confirm(`警告：確定開啟新學年「${newYear}」？舊記錄將被完全清除！`)) return;
+            toggleLoading(true);
+            try {
+                const response = await fetch(GAS_API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'resetYear', newYear })
+                });
+                const result = await response.json();
+                if(result.success) {
+                    document.getElementById('newYearInput').value = '';
+                    await fetchData();
+                }
+            } catch (error) {}
+            toggleLoading(false);
+        }
+    </script>
+</body>
+</html>
