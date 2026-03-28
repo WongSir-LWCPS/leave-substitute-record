@@ -314,10 +314,17 @@
 
         function updateTeacherDropdown() {
             const select = document.getElementById('teacherSelect');
+            const currentValue = select.value; // 🌟 記住目前選擇的老師
+            
             select.innerHTML = '<option value="">請選擇...</option>';
             appData.teachers.forEach(teacher => {
                 select.innerHTML += `<option value="${teacher}">${teacher}</option>`;
             });
+            
+            // 🌟 更新完選單後，把原本選的老師設定回去（如果有的話）
+            if (currentValue) {
+                select.value = currentValue;
+            }
         }
 
         function updateTeacherListSettings() {
