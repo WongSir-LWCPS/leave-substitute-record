@@ -217,8 +217,8 @@
 
         window.onload = function() {
             setDefaultDate();
-            switchTab('tab-view');
-            fetchData();
+            // 載入時會自動切換到 tab-view，裡面的邏輯現在會自動觸發 fetchData()
+            switchTab('tab-view'); 
         };
 
         // 🌟 新增：顯示自動消失提示框的功能
@@ -287,7 +287,10 @@
                 activeBtn.classList.add('bg-blue-800', 'ring-2', 'ring-white');
             }
 
-            if(tabId === 'tab-view') renderSummaryTable();
+            // 🌟 修改這裡：每次切換到查看記錄時，強制重新從伺服器取得最新資料
+            if(tabId === 'tab-view') {
+                fetchData(true); 
+            }
         }
 
         function toggleLoading(show) {
