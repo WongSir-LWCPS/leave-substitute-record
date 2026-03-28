@@ -31,7 +31,7 @@
     <nav class="bg-blue-600 text-white p-3 md:p-4 shadow-md sticky top-0 z-30">
         <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
             <h1 class="text-lg md:text-xl font-bold text-center w-full md:w-auto">
-                樂華天主教小學 - 教師請假及代課記錄 
+                教師請假及代課記錄 
                 <span id="displayYear" class="text-blue-200 text-xs md:text-sm ml-1 block md:inline mt-1 md:mt-0">讀取中...</span>
             </h1>
             <div class="flex flex-wrap justify-center w-full md:w-auto gap-2">
@@ -76,14 +76,8 @@
             <div class="bg-white rounded-lg shadow-md overflow-x-auto table-scroll">
                 <table class="w-full text-left border-collapse min-w-[600px]">
                     <thead>
-                        <tr class="bg-gray-200 text-gray-700 text-sm md:text-base">
-                            <th class="p-2 md:p-3 border-b whitespace-nowrap sticky left-0 bg-gray-200 z-10">教師姓名</th>
-                            <th class="p-2 md:p-3 border-b whitespace-nowrap">a. 3天病假(次)</th>
-                            <th class="p-2 md:p-3 border-b whitespace-nowrap text-red-600">b. 請假(-0.5)</th>
-                            <th class="p-2 md:p-3 border-b whitespace-nowrap text-red-600">c. 請假(-1.0)</th>
-                            <th class="p-2 md:p-3 border-b whitespace-nowrap text-green-600">d. 代課(+0.5)</th>
-                            <th class="p-2 md:p-3 border-b whitespace-nowrap text-green-600">e. 代課(+1.0)</th>
-                            <th class="p-2 md:p-3 border-b whitespace-nowrap font-bold text-blue-600">總分</th>
+                        <!-- 🌟 這裡的表頭現在由 JS 動態生成 🌟 -->
+                        <tr id="dynamicTableHeaders" class="bg-gray-200 text-gray-700 text-sm md:text-base">
                         </tr>
                     </thead>
                     <tbody id="summaryTableBody" class="text-sm md:text-base">
@@ -114,55 +108,13 @@
                         
                         <div class="mb-6">
                             <label class="block text-gray-700 font-bold mb-2">3. 記錄數量 <span class="text-sm font-normal text-gray-500 block md:inline">(請在需要的項目輸入節數)</span></label>
-                            <div class="space-y-3 bg-gray-50 p-3 md:p-4 rounded-lg border border-gray-200">
-                                <!-- 情況 a -->
-                                <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2">
-                                    <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">a. 請三日病假 (只作記錄)</span>
-                                    <div class="flex items-center justify-end w-full sm:w-1/3">
-                                        <button type="button" onclick="changeQty('qty_a', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
-                                        <input type="number" id="qty_a" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
-                                        <button type="button" onclick="changeQty('qty_a', 1)" class="bg-gray-200 px-4 py-2 rounded-r text-xl hover:bg-gray-300 transition-colors">+</button>
-                                    </div>
-                                </div>
-                                <!-- 情況 b -->
-                                <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-red-400">
-                                    <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">b. 請一節班主任節/小息一及二/第十一節及課前當值(15分鐘) (-0.5分)</span>
-                                    <div class="flex items-center justify-end w-full sm:w-1/3">
-                                        <button type="button" onclick="changeQty('qty_b', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
-                                        <input type="number" id="qty_b" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
-                                        <button type="button" onclick="changeQty('qty_b', 1)" class="bg-gray-200 px-4 py-2 rounded-r text-xl hover:bg-gray-300 transition-colors">+</button>
-                                    </div>
-                                </div>
-                                <!-- 情況 c -->
-                                <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-red-600">
-                                    <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">c. 請假: 請一節第一至十課節、午膳及第小息三(30分鐘)(-1.0分)</span>
-                                    <div class="flex items-center justify-end w-full sm:w-1/3">
-                                        <button type="button" onclick="changeQty('qty_c', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
-                                        <input type="number" id="qty_c" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
-                                        <button type="button" onclick="changeQty('qty_c', 1)" class="bg-gray-200 px-4 py-2 rounded-r text-xl hover:bg-gray-300 transition-colors">+</button>
-                                    </div>
-                                </div>
-                                <!-- 情況 d -->
-                                <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-green-400">
-                                    <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">d. 代一節班主任節/小息一及二/第十一節及課前當值(15分鐘)(+0.5分)</span>
-                                    <div class="flex items-center justify-end w-full sm:w-1/3">
-                                        <button type="button" onclick="changeQty('qty_d', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
-                                        <input type="number" id="qty_d" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
-                                        <button type="button" onclick="changeQty('qty_d', 1)" class="bg-gray-200 px-4 py-2 rounded-r text-xl hover:bg-gray-300 transition-colors">+</button>
-                                    </div>
-                                </div>
-                                <!-- 情況 e -->
-                                <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 border-green-600">
-                                    <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">e. 代一節第一至十課節、午膳及第小息三(30分鐘)(+1.0分)</span>
-                                    <div class="flex items-center justify-end w-full sm:w-1/3">
-                                        <button type="button" onclick="changeQty('qty_e', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
-                                        <input type="number" id="qty_e" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
-                                        <button type="button" onclick="changeQty('qty_e', 1)" class="bg-gray-200 px-4 py-2 rounded-r text-xl hover:bg-gray-300 transition-colors">+</button>
-                                    </div>
-                                </div>
+                            
+                            <!-- 🌟 這裡的情況項目現在由 JS 動態生成 🌟 -->
+                            <div id="dynamicFormItems" class="space-y-3 bg-gray-50 p-3 md:p-4 rounded-lg border border-gray-200">
                             </div>
+                            
                         </div>
-                        <button type="submit" class="bg-blue-600 text-white px-6 py-4 md:py-3 rounded-lg hover:bg-blue-700 w-full font-bold text-lg md:text-xl shadow-md transition-colors">新增記錄</button>
+                        <button type="submit" class="bg-blue-600 text-white px-6 py-4 md:py-3 rounded-lg hover:bg-blue-700 w-full font-bold text-lg md:text-xl shadow-md transition-colors">提交當日記錄</button>
                     </form>
                 </div>
             </div>
@@ -197,6 +149,34 @@
                         <!-- 教師名單由 JS 動態生成 -->
                     </div>
                 </div>
+
+                <!-- 🌟 全新：情況項目設定 🌟 -->
+                <div class="bg-white p-4 md:p-6 rounded-lg shadow-md border-t-4 border-blue-500 lg:col-span-2">
+                    <h2 class="text-lg md:text-xl font-bold mb-1 text-gray-700">3. 情況項目設定 <span class="text-sm font-normal text-gray-500">(自訂請假/代課類別)</span></h2>
+                    <p class="text-xs md:text-sm text-gray-500 mb-4 bg-blue-50 p-2 rounded">
+                        💡 這裡的設定將儲存在<b>這台電腦的瀏覽器中</b>。如果您使用另一台電腦，請確保兩邊的項目設定一致，表格才能正確統計。分數將由系統自動根據設定計算。
+                    </p>
+                    
+                    <div class="flex flex-col md:flex-row gap-2 mb-6 bg-gray-50 p-3 md:p-4 rounded border border-gray-200 items-start md:items-center">
+                        <input type="text" id="newTypeCode" placeholder="代號(如: f)" class="border border-gray-300 p-2 rounded w-full md:w-24 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="text" id="newTypeFullDesc" placeholder="完整說明 (如: f. 遲到扣分)" class="border border-gray-300 p-2 rounded flex-grow w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="text" id="newTypeShortDesc" placeholder="表格簡稱 (如: f. 遲到)" class="border border-gray-300 p-2 rounded w-full md:w-32 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="number" id="newTypeScore" placeholder="分數(如:-0.5)" step="0.5" class="border border-gray-300 p-2 rounded w-full md:w-28 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <select id="newTypeColor" class="border border-gray-300 p-2 rounded w-full md:w-32 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="border-gray-300">灰色 (一般)</option>
+                            <option value="border-red-400">淺紅 (扣分)</option>
+                            <option value="border-red-600">深紅 (多扣分)</option>
+                            <option value="border-green-400">淺綠 (加分)</option>
+                            <option value="border-green-600">深綠 (多加分)</option>
+                        </select>
+                        <button onclick="addRecordType()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-bold whitespace-nowrap w-full md:w-auto">新增項目</button>
+                    </div>
+
+                    <h3 class="font-bold text-gray-600 mb-3 text-sm md:text-base">現有情況項目</h3>
+                    <div id="settingsTypeList" class="space-y-2">
+                        <!-- 情況項目清單由 JS 動態生成 -->
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -212,35 +192,157 @@
 
         let appData = { year: '', teachers: [], records: [] };
         
+        // 🌟 動態情況項目清單陣列
+        let recordTypes = [];
+
         // 用來追蹤 Toast 的計時器，避免快速連續點擊時動畫錯亂
         let toastTimeout; 
 
         window.onload = function() {
             setDefaultDate();
-            // 載入時會自動切換到 tab-view，裡面的邏輯現在會自動觸發 fetchData()
+            initRecordTypes(); // 🌟 初始化載入動態項目
             switchTab('tab-view'); 
         };
 
-        // 🌟 新增：顯示自動消失提示框的功能
+        // 🌟 新增：初始化情況項目（從 LocalStorage 讀取或載入預設值）
+        function initRecordTypes() {
+            const stored = localStorage.getItem('appRecordTypes');
+            if (stored) {
+                recordTypes = JSON.parse(stored);
+            } else {
+                // 預設的 a-e 項目
+                recordTypes = [
+                    { code: 'a', fullDesc: 'a. 請三日病假 (只作記錄)', shortDesc: 'a. 3天病假(次)', score: 0, colorClass: 'border-gray-300' },
+                    { code: 'b', fullDesc: 'b. 請一節班主任節/小息一及二/第十一節及課前當值(15分鐘) (-0.5分)', shortDesc: 'b. 請假(-0.5)', score: -0.5, colorClass: 'border-red-400' },
+                    { code: 'c', fullDesc: 'c. 請假: 請一節第一至十課節、午膳及第小息三(30分鐘)(-1.0分)', shortDesc: 'c. 請假(-1.0)', score: -1.0, colorClass: 'border-red-600' },
+                    { code: 'd', fullDesc: 'd. 代一節班主任節/小息一及二/第十一節及課前當值(15分鐘)(+0.5分)', shortDesc: 'd. 代課(+0.5)', score: 0.5, colorClass: 'border-green-400' },
+                    { code: 'e', fullDesc: 'e. 代一節第一至十課節、午膳及第小息三(30分鐘)(+1.0分)', shortDesc: 'e. 代課(+1.0)', score: 1.0, colorClass: 'border-green-600' }
+                ];
+                saveRecordTypes(); 
+                return; 
+            }
+            // 如果是從 Storage 讀取，需呼叫渲染
+            renderRecordForm();
+            renderTableHeaders();
+            renderSettingsTypes();
+        }
+
+        function saveRecordTypes() {
+            localStorage.setItem('appRecordTypes', JSON.stringify(recordTypes));
+            // 儲存後同步更新介面
+            renderRecordForm();
+            renderTableHeaders();
+            renderSettingsTypes();
+            // 如果資料已經讀取完畢，同步更新統計表
+            if (appData.teachers.length > 0) renderSummaryTable(); 
+        }
+
+        // 🌟 渲染：新增記錄的表單項目
+        function renderRecordForm() {
+            const container = document.getElementById('dynamicFormItems');
+            let html = '';
+            recordTypes.forEach(t => {
+                html += `
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-white p-3 rounded shadow-sm gap-3 sm:gap-2 border-l-4 ${t.colorClass}">
+                    <span class="text-gray-700 text-sm md:text-base font-medium sm:w-2/3 leading-snug">${t.fullDesc}</span>
+                    <div class="flex items-center justify-end w-full sm:w-1/3">
+                        <button type="button" onclick="changeQty('qty_${t.code}', -1)" class="bg-gray-200 px-4 py-2 rounded-l text-xl hover:bg-gray-300 transition-colors">-</button>
+                        <input type="number" id="qty_${t.code}" value="0" min="0" class="w-16 md:w-12 text-center border-t border-b border-gray-200 py-2 text-lg">
+                        <button type="button" onclick="changeQty('qty_${t.code}', 1)" class="bg-gray-200 px-4 py-2 rounded-r text-xl hover:bg-gray-300 transition-colors">+</button>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        // 🌟 渲染：查看記錄表格的標題
+        function renderTableHeaders() {
+            const thead = document.getElementById('dynamicTableHeaders');
+            let html = '<th class="p-2 md:p-3 border-b whitespace-nowrap sticky left-0 bg-gray-200 z-10">教師姓名</th>';
+            recordTypes.forEach(t => {
+                let textColor = 'text-gray-700';
+                if(t.score < 0) textColor = 'text-red-600';
+                if(t.score > 0) textColor = 'text-green-600';
+                html += `<th class="p-2 md:p-3 border-b whitespace-nowrap ${textColor}">${t.shortDesc}</th>`;
+            });
+            html += '<th class="p-2 md:p-3 border-b whitespace-nowrap font-bold text-blue-600">總分</th>';
+            thead.innerHTML = html;
+        }
+
+        // 🌟 渲染：系統設定中的項目清單
+        function renderSettingsTypes() {
+            const list = document.getElementById('settingsTypeList');
+            list.innerHTML = '';
+            recordTypes.forEach(rt => {
+                list.innerHTML += `
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center p-3 border-b bg-white rounded shadow-sm gap-2">
+                        <div class="flex-grow">
+                            <span class="font-bold text-blue-700 mr-2 text-lg">[ ${rt.code} ]</span>
+                            <span class="text-sm md:text-base text-gray-800">${rt.fullDesc}</span>
+                            <div class="text-xs text-gray-500 mt-1">
+                                表格顯示: <b>${rt.shortDesc}</b> | 每次計算: <b>${rt.score} 分</b> 
+                            </div>
+                        </div>
+                        <button onclick="removeRecordType('${rt.code}')" class="text-red-500 hover:bg-red-50 border border-red-200 px-3 py-1.5 rounded transition-colors whitespace-nowrap w-full sm:w-auto">刪除項目</button>
+                    </div>
+                `;
+            });
+        }
+
+        // 🌟 新增情況項目邏輯
+        function addRecordType() {
+            const code = document.getElementById('newTypeCode').value.trim();
+            const fullDesc = document.getElementById('newTypeFullDesc').value.trim();
+            const shortDesc = document.getElementById('newTypeShortDesc').value.trim();
+            const score = parseFloat(document.getElementById('newTypeScore').value) || 0;
+            const color = document.getElementById('newTypeColor').value;
+
+            if(!code || !fullDesc || !shortDesc) {
+                showToast('請填寫完整的代號與說明資料！', false);
+                return;
+            }
+
+            if(recordTypes.find(rt => rt.code === code)) {
+                showToast(`代號 [${code}] 已經存在，請使用不同的代號。`, false);
+                return;
+            }
+
+            recordTypes.push({
+                code: code,
+                fullDesc: fullDesc,
+                shortDesc: shortDesc,
+                score: score,
+                colorClass: color
+            });
+
+            saveRecordTypes();
+            
+            // 清空輸入框
+            document.getElementById('newTypeCode').value = '';
+            document.getElementById('newTypeFullDesc').value = '';
+            document.getElementById('newTypeShortDesc').value = '';
+            document.getElementById('newTypeScore').value = '';
+            
+            showToast('✅ 新情況項目已成功新增！');
+        }
+
+        // 🌟 刪除情況項目邏輯
+        function removeRecordType(code) {
+            if(!confirm(`⚠️ 確定要刪除項目 [${code}] 嗎？這將會從表單和統計表中隱藏這個項目的欄位。`)) return;
+            recordTypes = recordTypes.filter(rt => rt.code !== code);
+            saveRecordTypes();
+            showToast('🗑️ 情況項目已刪除！');
+        }
+
         function showToast(message, isSuccess = true) {
             const toast = document.getElementById('toast');
-            
-            // 設定訊息文字
             toast.innerText = message;
-            
-            // 依照成功或失敗，改變背景顏色 (綠色=成功，紅色=失敗)
             toast.className = `fixed top-20 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-lg shadow-xl z-50 text-white font-bold text-center w-max max-w-sm toast-transition ${isSuccess ? 'bg-green-500' : 'bg-red-500'}`;
-            
-            // 讓它顯示並向下滑動一點點
             setTimeout(() => {
                 toast.classList.remove('opacity-0', '-translate-y-5');
                 toast.classList.add('opacity-100', 'translate-y-0');
             }, 10);
-
-            // 如果之前有計時器，先取消掉
             if(toastTimeout) clearTimeout(toastTimeout);
-
-            // 3秒後自動隱藏
             toastTimeout = setTimeout(() => {
                 toast.classList.remove('opacity-100', 'translate-y-0');
                 toast.classList.add('opacity-0', '-translate-y-5');
@@ -287,7 +389,6 @@
                 activeBtn.classList.add('bg-blue-800', 'ring-2', 'ring-white');
             }
 
-            // 🌟 修改這裡：每次切換到查看記錄時，強制重新從伺服器取得最新資料
             if(tabId === 'tab-view') {
                 fetchData(true); 
             }
@@ -297,7 +398,6 @@
             document.getElementById('loading').style.display = show ? 'flex' : 'none';
         }
 
-        // 🌟 新增 showLoading 參數，讓系統可以「背景更新」不顯示動畫
         async function fetchData(showLoading = true) {
             if(showLoading) toggleLoading(true);
             try {
@@ -317,14 +417,13 @@
 
         function updateTeacherDropdown() {
             const select = document.getElementById('teacherSelect');
-            const currentValue = select.value; // 🌟 記住目前選擇的老師
+            const currentValue = select.value; 
             
             select.innerHTML = '<option value="">請選擇...</option>';
             appData.teachers.forEach(teacher => {
                 select.innerHTML += `<option value="${teacher}">${teacher}</option>`;
             });
             
-            // 🌟 更新完選單後，把原本選的老師設定回去（如果有的話）
             if (currentValue) {
                 select.value = currentValue;
             }
@@ -342,7 +441,6 @@
             });
         }
 
-        // 🌟 這裡更新了：立刻關閉 Loading 動畫，並使用背景更新 🌟
         async function submitRecords(event) {
             event.preventDefault();
             const teacher = document.getElementById('teacherSelect').value;
@@ -351,14 +449,20 @@
             if(!teacher || !date) return;
 
             const recordsToSubmit = [];
-            const types = ['a', 'b', 'c', 'd', 'e'];
+            // 🌟 根據動態設定產生要提交的類型
+            const types = recordTypes.map(rt => rt.code);
             
             types.forEach(t => {
-                const count = parseInt(document.getElementById(`qty_${t}`).value) || 0;
-                if(count > 0) {
-                    recordsToSubmit.push({ date, teacher, type: t, count: count });
-                }
-            });
+    const count = parseInt(document.getElementById(`qty_${t}`).value) || 0;
+    if(count > 0) {
+        // 🌟 找到這個項目的分數設定
+        const typeDef = recordTypes.find(rt => rt.code === t);
+        const scoreValue = typeDef ? parseFloat(typeDef.score) : 0;
+        
+        // 🌟 把 score 一起送出給 GAS
+        recordsToSubmit.push({ date, teacher, type: t, count: count, score: scoreValue });
+    }
+});
 
             if(recordsToSubmit.length === 0) {
                 showToast('請至少在一個情況項目中輸入數量！', false);
@@ -373,7 +477,6 @@
                 });
                 const result = await response.json();
                 
-                // API 儲存完畢，立刻解除鎖定畫面！
                 toggleLoading(false); 
                 
                 if(result.success) {
@@ -381,8 +484,6 @@
                     
                     document.getElementById('recordForm').reset();
                     setDefaultDate();
-                    
-                    // 背景偷偷拉取新資料更新表格，不打斷使用者 (傳入 false)
                     fetchData(false); 
                 } else {
                     showToast('伺服器錯誤: ' + result.message, false);
@@ -393,37 +494,51 @@
             }
         }
 
+        // 🌟 渲染：以動態配置更新總表計算
         function renderSummaryTable() {
             const tbody = document.getElementById('summaryTableBody');
             tbody.innerHTML = '';
 
             let summary = {};
             appData.teachers.forEach(t => {
-                summary[t] = { a: 0, b: 0, c: 0, d: 0, e: 0, total: 0 };
+                summary[t] = { total: 0 };
+                recordTypes.forEach(rt => {
+                    summary[t][rt.code] = 0; // 初始化所有自訂項目為 0
+                });
             });
 
+            // 🌟 分數統一由前端根據設定即時計算，給予最大的彈性！
             appData.records.forEach(rec => {
                 if(summary[rec.teacher] && summary[rec.teacher][rec.type] !== undefined) {
                     summary[rec.teacher][rec.type]++;
-                    summary[rec.teacher].total += parseFloat(rec.points);
+                    
+                    // 找出該類型的分數設定並加上去
+                    const typeDef = recordTypes.find(rt => rt.code === rec.type);
+                    if(typeDef) {
+                        summary[rec.teacher].total += parseFloat(typeDef.score);
+                    }
                 }
             });
 
             appData.teachers.forEach(t => {
                 const stat = summary[t];
-                tbody.innerHTML += `
+                let trHtml = `
                     <tr class="border-b hover:bg-blue-50 transition-colors">
                         <td class="p-2 md:p-3 font-bold text-blue-600 cursor-pointer hover:underline whitespace-nowrap sticky left-0 bg-white/90 backdrop-blur-sm z-10 border-r md:border-r-0 border-gray-100" onclick="showTeacherDetails('${t}')">
                             <span class="flex items-center gap-1">🔍 ${t}</span>
-                        </td>
-                        <td class="p-2 md:p-3 text-gray-600 text-center md:text-left">${stat.a}</td>
-                        <td class="p-2 md:p-3 text-red-500 text-center md:text-left">${stat.b}</td>
-                        <td class="p-2 md:p-3 text-red-500 text-center md:text-left">${stat.c}</td>
-                        <td class="p-2 md:p-3 text-green-600 text-center md:text-left">${stat.d}</td>
-                        <td class="p-2 md:p-3 text-green-600 text-center md:text-left">${stat.e}</td>
-                        <td class="p-2 md:p-3 font-bold text-center md:text-left ${stat.total < 0 ? 'text-red-600' : 'text-blue-600'}">${stat.total}</td>
-                    </tr>
-                `;
+                        </td>`;
+                
+                // 動態產生每一欄
+                recordTypes.forEach(rt => {
+                    let textColor = 'text-gray-600';
+                    if(rt.score < 0) textColor = 'text-red-500';
+                    if(rt.score > 0) textColor = 'text-green-600';
+                    trHtml += `<td class="p-2 md:p-3 ${textColor} text-center md:text-left">${stat[rt.code]}</td>`;
+                });
+
+                trHtml += `<td class="p-2 md:p-3 font-bold text-center md:text-left ${stat.total < 0 ? 'text-red-600' : 'text-blue-600'}">${stat.total}</td></tr>`;
+                
+                tbody.innerHTML += trHtml;
             });
         }
 
@@ -437,13 +552,11 @@
             
             const tRecords = appData.records.filter(r => r.teacher === teacherName);
             
-            const typeLabels = {
-               'a': 'a. 三日病假 (不計分)',
-               'b': 'b. 請一節班主任節/小息一及二/第十一節及課前當值(15分鐘) (-0.5分)',
-               'c': 'c. 請假: 請一節第一至十課節、午膳及第小息三(30分鐘)(-1.0分)',
-               'd': 'd. 代一節班主任節/小息一及二/第十一節及課前當值(15分鐘)(+0.5分)',
-               'e': 'e. 代一節第一至十課節、午膳及第小息三(30分鐘)(+1.0分)'
-            };
+            // 🌟 轉換成動態的標籤
+            const typeLabels = {};
+            recordTypes.forEach(rt => {
+                typeLabels[rt.code] = rt.fullDesc;
+            });
             
             let html = '';
             let hasRecord = false;
@@ -498,12 +611,12 @@
                 });
                 const result = await response.json();
                 
-                toggleLoading(false); // 提早關閉
+                toggleLoading(false);
                 
                 if(result.success) {
                     showToast('🗑️ 記錄已成功刪除！');
                     closeTeacherModal(); 
-                    fetchData(false); // 背景更新
+                    fetchData(false); 
                 } else {
                     showToast('刪除失敗: ' + result.message, false);
                 }
